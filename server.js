@@ -7,7 +7,7 @@ connectDB(); // Connecct to MongoDB
 
 const app = express();
 
-const port =process.env.PORT
+//const port =process.env.PORT
 
 app.get('/', (req, res) => {
   res.send('API is running...');
@@ -16,4 +16,4 @@ app.get('/', (req, res) => {
 
 export default app;
 
-app.listen(port, () => console.log(`Server running on port ${port}`));
+//app.listen(port, () => console.log(`Server running on port ${port}`));
