@@ -47,7 +47,7 @@ const userSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-/*
+
 
 // Method to match the entered password with the hashed password
 userSchema.methods.matchPassword = async function (enteredPassword) {
@@ -61,9 +61,9 @@ userSchema.pre('save', async function (next) {
   }
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
-});s
+});
 
-*/
+
 
 // Prevent model overwrite error
 const User = mongoose.models.User || mongoose.model('User', userSchema);
