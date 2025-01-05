@@ -82,8 +82,20 @@ const authUser = asyncHandler(async (req, res) => {
 // @route   GET /api/users
 // @access  Private/Admin
 const getUsers = asyncHandler(async (req, res) => {
-  res.send('get users');
+  try {
+    const data = await User.find();
+
+    res.status(200).json({
+      data,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Server error while fetching users',
+    });
+  }
 });
+
 
 
 
