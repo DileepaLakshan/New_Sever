@@ -1,5 +1,6 @@
 import asyncHandler from '../middleware/asyncHandler.js';
 import User from '../models/userModel.js';
+import genrateToken from '../utils/generatetoken.js';
 
 // @desc    Register a new user
 // @route   POST /api/users
@@ -22,7 +23,7 @@ const registerUser = asyncHandler(async (req, res) => {
     password
   });
 
-  /*
+  
   if(user) {
     genrateToken(res, user._id);
     res.status(201).json({
@@ -35,7 +36,7 @@ const registerUser = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error('Invalid user data');
   }
-    */
+    
 
   res.status(201).json({
     _id: user._id,
