@@ -123,5 +123,5 @@ const getUserProfile = asyncHandler(async (req, res) => {
 
 
 export {
-    registerUser,logoutUser,getUserProfile
+    registerUser,logoutUser,getUserProfile,authUser
   };
