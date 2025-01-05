@@ -10,11 +10,6 @@ connectDB(); // Connecct to MongoDB
 
 const app = express();
 
-app.use(cors({
-  origin: 'https://new-sever.vercel.app', // Allow specific origin
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed methods
-  credentials: true, // Allow cookies if needed
-}));
 
 //Body parser middleware
 app.use(express.json());
