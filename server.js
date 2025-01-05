@@ -18,7 +18,7 @@ app.use(express.urlencoded({ extended: true}));
 //Cookie parser middleware
 app.use(cookieParser());
 
-//const port =process.env.PORT
+const port =process.env.PORT
 
 app.get('/', (req, res) => {
   res.send('API is running...');
@@ -32,4 +32,4 @@ app.use(errorHandler);
 
 export default app;
 
-//app.listen(port, () => console.log(`Server running on port ${port}`));
+app.listen(port, () => console.log(`Server running on port ${port}`));

@@ -32,6 +32,13 @@ const authUser = asyncHandler(async (req, res) => {
 
 });
 
+// @desc    Get all users
+// @route   GET /api/users
+// @access  Private/Admin
+const getUsers = asyncHandler(async (req, res) => {
+  res.send('get users');
+});
+
 
 
 
@@ -123,5 +130,5 @@ const getUserProfile = asyncHandler(async (req, res) => {
 
 
 export {
-    registerUser,logoutUser,getUserProfile,authUser
+    registerUser,logoutUser,getUserProfile,authUser,getUsers
   };
