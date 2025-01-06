@@ -67,5 +67,60 @@ const getProductById = asyncHandler(async (req, res) => {
   });
 
 
-export { addProduct, getProductById, getProducts };
+
+
+// @desc    Update a product
+// @route   PUT /api/products/:id
+// @access  Public
+const updateProduct = asyncHandler(async (req, res) => {
+  const { name, image, category, description, price } = req.body;
+
+  // Find the product by ID
+  const product = await Product.findById(req.params.id);
+
+  if (product) {
+    // Update the product's fields
+    product.name = name || product.name;
+    product.image = image || product.image;
+    product.category = category || product.category;
+    product.description = description || product.description;
+    product.price = price || product.price;
+
+    // Save the updated product
+    const updatedProduct = await product.save();
+
+    // Send the updated product in the response
+    res.status(200).json({
+      _id: updatedProduct._id,
+      name: updatedProduct.name,
+      image: updatedProduct.image,
+      category: updatedProduct.category,
+      description: updatedProduct.description,
+      price: updatedProduct.price,
+    });
+  } else {
+    res.status(404);
+    throw new Error('Product not found');
+  }
+});
+
+
+
+// @desc    Delete a product
+// @route   DELETE /api/products/:id
+// @access  Public
+const deleteProduct = asyncHandler(async (req, res) => {
+  const product = await Product.findById(req.params.id);
+
+  if (product) {
+    await product.deleteOne();
+    res.json({ message: 'Product removed' });
+  } else {
+    res.status(404);
+    throw new Error('Product not found');
+  }
+});
+
+
+export { addProduct, getProductById, getProducts, updateProduct, deleteProduct };
 
