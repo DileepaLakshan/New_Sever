@@ -19,7 +19,7 @@ const userSchema = mongoose.Schema(
       zipCode: { type: String },
     },
 
-    /*
+    
     cart: [
       {
         productId: {
@@ -42,7 +42,7 @@ const userSchema = mongoose.Schema(
         },
       },
     ],
-    */
+    
   },
   { timestamps: true }
 );
