@@ -7,7 +7,7 @@ import Product from '../models/productModel.js';
 // @route   POST /api/cart
 // @access  Private
 const addItemToCart = asyncHandler(async (req, res) => {
-    const { productId, quantity, price,  } = req.body;
+    const { productId, quantity,  } = req.body;
   
     const user = await User.findById(req.user._id);
   
@@ -19,7 +19,7 @@ const addItemToCart = asyncHandler(async (req, res) => {
         existingItem.quantity += quantity;
       } else {
         // Add new item to the cart
-        user.cart.push({ productId, quantity, price,name,image });
+        user.cart.push({ productId, quantity,});
       }
   
       await user.save();
