@@ -19,7 +19,7 @@ import {
   router.post('/adminAuth', isadmin,  authUser);
   router.post('/logout', logoutUser);
   router.route('/profile').get(protect, getUserProfile).put(protect, updateUserProfile);
-  router.route('/:id').delete(protect, isadmin, deleteUser).get(protect, isadmin, getUserById);
+  router.route('/:id').delete(protect, admin, deleteUser).get(protect, admin, getUserById);
   
   
   export default router;
