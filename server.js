@@ -3,8 +3,10 @@ import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import connectDB from './config/db.js';
 import { errorHandler, notFound } from './middleware/errorMiddleware.js';
-import userRoutes from './routes/userRoutes.js'
-import productRoutes from './routes/productRoutes.js'
+import userRoutes from './routes/userRoutes.js';
+import productRoutes from './routes/productRoutes.js';
+import cartRoutes from './routes/productRoutes.js';
+
 dotenv.config();
 
 connectDB(); // Connecct to MongoDB
@@ -28,6 +30,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/cart', cartRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
