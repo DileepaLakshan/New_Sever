@@ -122,5 +122,14 @@ const deleteProduct = asyncHandler(async (req, res) => {
 });
 
 
-export { addProduct, getProductById, getProducts, updateProduct, deleteProduct };
+// @desc    Fetch all products in moble
+// @route   GET /api/products
+// @access  Public
+const getProducts2 = asyncHandler(async (req, res) => {
+  const products = await Product.find({}).select("-image");
+  res.status(200).json(products); // Explicitly set status 200
+});
+
+
+export { addProduct, getProductById, getProducts, updateProduct, deleteProduct, getProducts2 };
 
