@@ -1,17 +1,24 @@
 import express from 'express';
+import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import connectDB from './config/db.js';
 import { errorHandler, notFound } from './middleware/errorMiddleware.js';
 import userRoutes from './routes/userRoutes.js';
 import productRoutes from './routes/productRoutes.js';
-import cartRoutes from './routes/productRoutes.js';
+import cartRoutes from './routes/cartRoutes.js';
 
 dotenv.config();
 
 connectDB(); // Connecct to MongoDB
 
 const app = express();
+
+app.use(cors({
+  origin: 'http://localhost:5173', // Allow specific origin
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed methods
+  credentials: true, // Allow cookies if needed
+}))
 
 
 //Body parser middleware

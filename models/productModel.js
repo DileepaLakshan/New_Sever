@@ -51,6 +51,10 @@ const productSchema = mongoose.Schema(
       required: true,
     },
 
+    modelImageUrl: {
+      type: String,
+    },
+
     reviews: [reviewSchema],
 
     rating: {

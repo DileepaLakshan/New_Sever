@@ -8,7 +8,7 @@ import User from "../models/userModel.js";
 // @access  Public
 const addProduct = asyncHandler(async (req, res) => {
 
-    const { name, image, category, description, price } = req.body;
+    const { name, image, category, description, price, modelImageUrl } = req.body;
   
   
     const user = await User.findById(req.user._id);
@@ -19,18 +19,15 @@ const addProduct = asyncHandler(async (req, res) => {
       image,
       category,
       description,
-      price
+      price,
+      modelImageUrl
     });
   
   
     if (product) {
       res.status(201).json({
-        _id: product._id,
-        name: product.name,
-        image: product.image,
-        category: product.category,
-        description: product.description,
-        price: product.price,
+        success: true, // Include the 'success' field for frontend validation
+        message: "Product added successfully",
       });
     } else {
       res.status(400);
