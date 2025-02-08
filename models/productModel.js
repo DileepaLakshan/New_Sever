@@ -55,6 +55,10 @@ const productSchema = mongoose.Schema(
       type: String,
     },
 
+    imageUrl: {
+      type: String,
+    },
+
     reviews: [reviewSchema],
 
     rating: {
