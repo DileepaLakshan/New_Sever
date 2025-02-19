@@ -7,6 +7,9 @@ import { errorHandler, notFound } from './middleware/errorMiddleware.js';
 import userRoutes from './routes/userRoutes.js';
 import productRoutes from './routes/productRoutes.js';
 import cartRoutes from './routes/cartRoutes.js';
+import cartRoutes from './routes/productRoutes.js';
+import paymentRoutes  from './routes/paymentRouters.js';
+import cors from 'cors';
 
 dotenv.config();
 
@@ -15,7 +18,7 @@ connectDB(); // Connecct to MongoDB
 const app = express();
 
 app.use(cors({
-  origin: 'http://localhost:5173', // Allow specific origin
+  origin: ['https://funiture-site-1-git-main-neshadis-projects.vercel.app', 'http://localhost:5173'],// Allow specific origin
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed methods
   credentials: true, // Allow cookies if needed
 }))
@@ -41,6 +44,9 @@ app.use('/api/cart', cartRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
+
+//payment
+app.use('/api',paymentRoutes);
 
 export default app;
 
