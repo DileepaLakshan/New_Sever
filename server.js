@@ -5,7 +5,7 @@ import connectDB from './config/db.js';
 import { errorHandler, notFound } from './middleware/errorMiddleware.js';
 import userRoutes from './routes/userRoutes.js';
 import productRoutes from './routes/productRoutes.js';
-import cartRoutes from './routes/productRoutes.js';
+import cartRoutes from './routes/cartRoutes.js';
 import cors from 'cors';
 
 dotenv.config();
