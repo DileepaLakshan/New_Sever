@@ -25,6 +25,8 @@ const addProduct = asyncHandler(async (req, res) => {
   
     if (product) {
       res.status(201).json({
+        success: true,
+        message: "Product added successfully",
         _id: product._id,
         name: product.name,
         image: product.image,
@@ -33,8 +35,10 @@ const addProduct = asyncHandler(async (req, res) => {
         price: product.price,
       });
     } else {
-      res.status(400);
-      throw new Error('Invalid product data');
+      res.status(400).json({
+        success: false, // Send success as false in case of failure
+        message: 'Invalid product data', // Failure message
+      });
     }
   });
 

@@ -9,12 +9,16 @@ const protect = asyncHandler(async (req, res, next) => {
     
 
     let token;
+    
 
     //Read the JWT from cookie
     token = req.cookies.jwt;
+    console.log(token);
+    console.log("hi3");
 
     if (token){
         try {
+            console.log("hi1");
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
             // console.log(decoded.userId);
             req.user = await User.findById(decoded.userId).select('-password');
@@ -22,12 +26,14 @@ const protect = asyncHandler(async (req, res, next) => {
             next();
 
         }catch (error) {
+            console.log("hi4");
             console.log(error);
             res.status(401);
             throw new Error('Not authorized, no token');
 
         }
     } else {
+        console.log("hi2");
         res.status(401);
         throw new Error('Not authorized, no token');
     }
