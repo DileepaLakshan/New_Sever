@@ -6,6 +6,7 @@ import { errorHandler, notFound } from './middleware/errorMiddleware.js';
 import userRoutes from './routes/userRoutes.js';
 import productRoutes from './routes/productRoutes.js';
 import cartRoutes from './routes/productRoutes.js';
+import paymentRoutes  from './routes/paymentRouters.js';
 import cors from 'cors';
 
 dotenv.config();
@@ -41,6 +42,9 @@ app.use('/api/cart', cartRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
+
+//payment
+app.use('/api',paymentRoutes);
 
 export default app;
 
