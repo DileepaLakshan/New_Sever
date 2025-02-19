@@ -18,11 +18,10 @@ const orderSchema = mongoose.Schema(
       },
     ],
     shippingAddress: {
-      addressLine1: { type: String,},
-      addressLine2: { type: String },
-      district: { type: String,},
-      province: { type: String,},
-      zipCode: { type: String,},
+      address: { type: String, },
+      district: { type: String, },
+      province: { type: String, },
+      zipCode: { type: String, },
     },
     paymentMethod: {
       type: String,

@@ -5,6 +5,7 @@ import Order from '../models/orderModel.js';
 // @route   POST /api/orders
 // @access  Private
 const createOrder = asyncHandler(async (req, res) => {
+    
   const { orderItems, shippingAddress, paymentMethod, totalPrice } = req.body;
 
   if (!orderItems || orderItems.length === 0) {
