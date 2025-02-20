@@ -7,8 +7,10 @@ import User from "../models/userModel.js";
 // @route   POST /api/addProduct
 // @access  Public
 const addProduct = asyncHandler(async (req, res) => {
+  
+  console.log(req.body);
 
-    const { name, image, category, description, price } = req.body;
+    const { name, image, category, description, price, modelImageUrl, imageUrl } = req.body;
   
   
     const user = await User.findById(req.user._id);
@@ -19,18 +21,16 @@ const addProduct = asyncHandler(async (req, res) => {
       image,
       category,
       description,
-      price
+      price,
+      modelImageUrl,
+      imageUrl,
     });
   
   
     if (product) {
       res.status(201).json({
-        _id: product._id,
-        name: product.name,
-        image: product.image,
-        category: product.category,
-        description: product.description,
-        price: product.price,
+        success: true, // Include the 'success' field for frontend validation
+        message: "Product added successfully",
       });
     } else {
       res.status(400);
@@ -44,7 +44,7 @@ const addProduct = asyncHandler(async (req, res) => {
 // @route   GET /api/products
 // @access  Public
 const getProducts = asyncHandler(async (req, res) => {
-    const products = await Product.find({});
+    const products = await Product.find({}).select('-imageUrl');
     res.status(200).json(products); // Explicitly set status 200
   });
 
