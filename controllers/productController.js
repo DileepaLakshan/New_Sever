@@ -12,6 +12,7 @@ const addProduct = asyncHandler(async (req, res) => {
   
   
     const user = await User.findById(req.user._id);
+    console.log(`imageurl:${imageUrl}`);
   
     const product = await Product.create({
       user,
