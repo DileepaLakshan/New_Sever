@@ -1,22 +1,21 @@
-import asyncHandler from '../middleware/asyncHandler.js';
+import asyncHandler from "../middleware/asyncHandler.js";
 import User from "../models/userModel.js";
-import genrateToken from '../utils/generatetoken.js';
-import sendEmail from '../utils/sendEmail.js';
-import nodemailer from 'nodemailer';
-import crypto from 'crypto';
-
+import genrateToken from "../utils/generatetoken.js";
+import sendEmail from "../utils/sendEmail.js";
+import nodemailer from "nodemailer";
+import crypto from "crypto";
+import { json } from "express";
+import emailTemplate from "../assets/email.js";
 
 // @desc    Auth user & get token
 // @route   POST /api/users/login
 // @access  Public
 const authUser = asyncHandler(async (req, res) => {
-  
   const { email, password } = req.body;
 
   const user = await User.findOne({ email });
 
-  if(user && (await user.matchPassword(password))) {
-
+  if (user && (await user.matchPassword(password))) {
     const token = genrateToken(res, user._id);
 
     res.status(200).json({
@@ -24,17 +23,13 @@ const authUser = asyncHandler(async (req, res) => {
       name: user.name,
       email: user.email,
       isAdmin: user.isAdmin,
-      token: token
+      token: token,
     });
   } else {
     res.status(401);
-    throw new Error('Invalid email or password');
+    throw new Error("Invalid email or password");
   }
-
-
 });
-
-
 
 // @desc    Register a new user
 // @route   POST /api/users
@@ -44,20 +39,20 @@ const registerUser = asyncHandler(async (req, res) => {
 
   // console.log('hiiii');
 
-  const userExist = await User.findOne( {email} );
+  const userExist = await User.findOne({ email });
 
   if (userExist) {
     res.status(400);
-    throw new Error('User already exists');
+    throw new Error("User already exists");
   }
 
   const user = await User.create({
     name,
     email,
-    password
+    password,
   });
 
-  if(user) {
+  if (user) {
     genrateToken(res, user._id);
     res.status(201).json({
       _id: user._id,
@@ -65,37 +60,31 @@ const registerUser = asyncHandler(async (req, res) => {
       email: user.email,
       isAdmin: user.isAdmin,
     });
-  }else {
+  } else {
     res.status(400);
-    throw new Error('Invalid user data');
+    throw new Error("Invalid user data");
   }
 });
-
 
 // @desc    Logout user / clear cookie
 // @route   POST /api/users/logout
 // @access  Private
 const logoutUser = asyncHandler(async (req, res) => {
-  res.cookie('jwt', '', {
+  res.cookie("jwt", "", {
     httpOnly: true,
-    expires: new Date(0)
+    expires: new Date(0),
   });
 
-  res.status(200).json({ message: 'Logged out successfully'});
+  res.status(200).json({ message: "Logged out successfully" });
 });
-
-
 
 // @desc    Get user profile
 // @route   GET /api/users/profile
 // @access  Private
 const getUserProfile = asyncHandler(async (req, res) => {
- 
   const user = await User.findById(req.user._id);
 
-  if(user) {
-
-    
+  if (user) {
     res.status(200).json({
       _id: user._id,
       name: user.name,
@@ -106,15 +95,12 @@ const getUserProfile = asyncHandler(async (req, res) => {
       contactNumber1: user.contactNumber1,
       contactNumber2: user.contactNumber2,
       shippingAddress: user.shippingAddress,
-
     });
-  }else {
+  } else {
     res.status(404);
-    throw new Error('User not found');
+    throw new Error("User not found");
   }
 });
-
-
 
 // @desc    Update user profile
 // @route   PUT /api/users/profile
@@ -132,7 +118,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
     user.shippingAddress = req.body.shippingAddress || user.shippingAddress;
   }
 
-  if(req.body.password) {
+  if (req.body.password) {
     user.password = req.body.password;
   }
 
@@ -142,7 +128,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
     _id: updateUser._id,
     name: updateUser.name,
     email: updateUser.email,
-  })
+  });
 });
 
 // @desc    Forgot password
@@ -156,53 +142,57 @@ const forgotPassword = asyncHandler(async (req, res) => {
 
   if (!user) {
     res.status(404);
-    throw new Error('User not found');
+    throw new Error("User not found");
   }
 
   // Generate and set password reset token
   const resetToken = user.getResetPasswordToken();
   await user.save({ validateBeforeSave: false });
 
-
   // Create reset URL
-  const resetUrl = `${req.protocol}://${req.get('host')}/api/users/resetpassword/${resetToken}`;
+  const resetUrl = `${req.protocol}://${req.get(
+    "host"
+  )}/api/users/resetpassword`;
   console.log(resetUrl);
 
   // Send email
   try {
-    await sendEmail(user.email, 'Password Reset Request', `Click the link to reset your password: ${resetUrl}`);
-    res.status(200).json({ message: 'Email sent successfully' });
+    await sendEmail(
+      user.email,
+      "Password Reset Request",
+      `Copy this code : ${resetToken}
+      Use this like to reset your password: \n\n${resetUrl}
+      `
+    );
+    res.status(200).json({ message: "Email sent successfully" });
   } catch (error) {
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;
     await user.save({ validateBeforeSave: false });
     res.status(500);
     console.log("Email not send");
-    throw new Error('Email could not be sent');
+    throw new Error("Email could not be sent");
   }
 });
 
 // @desc    Reset password
-// @route   PUT /api/users/resetpassword/:resettoken
+// @route   PUT /api/users/resetpassword
 // @access  Public
 const resetPassword = asyncHandler(async (req, res) => {
 
-
-  console.log(req.params.password);
   const resetPasswordToken = crypto
-    .createHash('sha256')
-    .update(req.params.resetToken)
-    .digest('hex');
+    .createHash("sha256")
+    .update(req.body.resetToken)
+    .digest("hex");
 
   const user = await User.findOne({
     resetPasswordToken,
     resetPasswordExpire: { $gt: Date.now() },
   });
 
-  console.log(user);
   if (!user) {
     res.status(400);
-    throw new Error('Invalid token');
+    throw new Error("Invalid token");
   }
 
   user.password = req.body.password;
@@ -211,52 +201,47 @@ const resetPassword = asyncHandler(async (req, res) => {
 
   await user.save();
 
-  res.status(200).json({ message: 'Password reset successful' });
+  res.status(200).json({ message: "Password reset successful" });
 });
-
-
-
-
 
 // @desc    Get all users
 // @route   GET /api/users
 // @access  Private/Admin
 const getUsers = asyncHandler(async (req, res) => {
-  res.send('get users');
+  res.send("get users");
 });
-
-
 
 // @desc    Delete user
 // @route   DELETE /api/users/:id
 // @access  Private/Admin
 const deleteUser = asyncHandler(async (req, res) => {
-  res.send('delete user');
+  res.send("delete user");
 });
-
-
 
 // @desc    Get user by ID
 // @route   GET /api/users/:id
 // @access  Private/Admin
 const getUserById = asyncHandler(async (req, res) => {
-  res.send('get user by id');
+  res.send("get user by id");
 });
-
-
 
 // @desc    Update user
 // @route   PUT /api/users/:id
 // @access  Private/Admin
 const updateUser = asyncHandler(async (req, res) => {
-  res.send('update user');
+  res.send("update user");
 });
 
-
-
 export {
-  authUser, deleteUser,
-  getUserById, getUserProfile, getUsers, logoutUser,
-  registerUser, updateUser, updateUserProfile,forgotPassword,resetPassword
+  authUser,
+  deleteUser,
+  getUserById,
+  getUserProfile,
+  getUsers,
+  logoutUser,
+  registerUser,
+  updateUser,
+  updateUserProfile,
+  forgotPassword,
+  resetPassword,
 };
-
