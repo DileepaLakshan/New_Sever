@@ -1,6 +1,38 @@
 import asyncHandler from '../middleware/asyncHandler.js';
-import User from '../models/userModel.js';
+import User from "../models/userModel.js";
 import genrateToken from '../utils/generatetoken.js';
+import sendEmail from '../utils/sendEmail.js';
+import nodemailer from 'nodemailer';
+
+
+
+// @desc    Auth user & get token
+// @route   POST /api/users/login
+// @access  Public
+const authUser = asyncHandler(async (req, res) => {
+  
+  const { email, password } = req.body;
+
+  const user = await User.findOne({ email });
+
+  if(user && (await user.matchPassword(password))) {
+
+    const token = genrateToken(res, user._id);
+
+    res.status(200).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      isAdmin: user.isAdmin,
+      token: token
+    });
+  } else {
+    res.status(401);
+    throw new Error('Invalid email or password');
+  }
+
+
+});
 
 
 
@@ -10,7 +42,7 @@ import genrateToken from '../utils/generatetoken.js';
 const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
 
-
+  // console.log('hiiii');
 
   const userExist = await User.findOne( {email} );
 
@@ -38,60 +70,6 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new Error('Invalid user data');
   }
 });
-
-
-
-// @desc    Auth user & get token
-// @route   POST /api/users/auth
-// @access  Public
-const authUser = asyncHandler(async (req, res) => {
-
-  
-  const { email, password } = req.body;
-
-  const user = await User.findOne({ email });
-
-  if(user && (await user.matchPassword(password))) {
-
-    console.log(user._id);
-
-    const token = genrateToken(res, user._id);
-
-    res.status(200).json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      isAdmin: user.isAdmin,
-      token: token
-    });
-  } else {
-    res.status(401);
-    throw new Error('Invalid email or password');
-  }
-
-
-});
-
-
-
-// @desc    Get all users
-// @route   GET /api/users
-// @access  Private/Admin
-const getUsers = asyncHandler(async (req, res) => {
-  try {
-    const data = await User.find();
-
-    res.status(200).json({
-      data,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Server error while fetching users',
-    });
-  }
-});
-
 
 
 // @desc    Logout user / clear cookie
@@ -137,6 +115,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
 });
 
 
+
 // @desc    Update user profile
 // @route   PUT /api/users/profile
 // @access  Private
@@ -166,42 +145,114 @@ const updateUserProfile = asyncHandler(async (req, res) => {
   })
 });
 
+// @desc    Forgot password
+// @route   POST /api/users/forgotpassword
+// @access  Public
+const forgotPassword = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+
+  const user = await User.findOne({ email });
+  //console.log(user);
+
+  if (!user) {
+    res.status(404);
+    throw new Error('User not found');
+  }
+
+  // Generate and set password reset token
+  const resetToken = user.getResetPasswordToken();
+  await user.save({ validateBeforeSave: false });
+
+
+  // Create reset URL
+  const resetUrl = `${req.protocol}://${req.get('host')}/api/users/resetpassword/${resetToken}`;
+  console.log(resetUrl);
+
+  // Send email
+  try {
+    await sendEmail(user.email, 'Password Reset Request', `Click the link to reset your password: ${resetUrl}`);
+    res.status(200).json({ message: 'Email sent successfully' });
+  } catch (error) {
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+    await user.save({ validateBeforeSave: false });
+    res.status(500);
+    console.log("Email not send");
+    throw new Error('Email could not be sent');
+  }
+});
+
+// @desc    Reset password
+// @route   PUT /api/users/resetpassword/:resettoken
+// @access  Public
+const resetPassword = asyncHandler(async (req, res) => {
+  const resetPasswordToken = crypto
+    .createHash('sha256')
+    .update(req.params.resettoken)
+    .digest('hex');
+
+  const user = await User.findOne({
+    resetPasswordToken,
+    resetPasswordExpire: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    res.status(400);
+    throw new Error('Invalid token');
+  }
+
+  user.password = req.body.password;
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpire = undefined;
+
+  await user.save();
+
+  res.status(200).json({ message: 'Password reset successful' });
+});
+
+
+
+
+
+// @desc    Get all users
+// @route   GET /api/users
+// @access  Private/Admin
+const getUsers = asyncHandler(async (req, res) => {
+  res.send('get users');
+});
+
+
 
 // @desc    Delete user
 // @route   DELETE /api/users/:id
 // @access  Private/Admin
 const deleteUser = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.params.id);
-
-  if (user) {
-    await user.deleteOne();
-    res.json({ message: 'User removed' });
-  } else {
-    res.status(404);
-    throw new Error('User not found');
-  }
+  res.send('delete user');
 });
+
 
 
 // @desc    Get user by ID
 // @route   GET /api/users/:id
 // @access  Private/Admin
 const getUserById = asyncHandler(async (req, res) => {
-
-  const user = await User.findById(req.params.id);
-  
-    if (user) {
-      return res.json(user);
-    }
-  
-    res.status(404);
-    throw new Error('User not found');
+  res.send('get user by id');
 });
 
 
 
+// @desc    Update user
+// @route   PUT /api/users/:id
+// @access  Private/Admin
+const updateUser = asyncHandler(async (req, res) => {
+  res.send('update user');
+});
+
 
 
 export {
-    registerUser, logoutUser, getUserProfile, authUser, getUsers, updateUserProfile, deleteUser, getUserById
-  };
+  authUser, deleteUser,
+  getUserById, getUserProfile, getUsers, logoutUser,
+  registerUser, updateUser, updateUserProfile,forgotPassword,resetPassword
+};
+
