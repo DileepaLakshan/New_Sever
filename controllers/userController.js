@@ -3,7 +3,7 @@ import User from "../models/userModel.js";
 import genrateToken from '../utils/generatetoken.js';
 import sendEmail from '../utils/sendEmail.js';
 import nodemailer from 'nodemailer';
-
+import crypto from 'crypto';
 
 
 // @desc    Auth user & get token
@@ -186,9 +186,12 @@ const forgotPassword = asyncHandler(async (req, res) => {
 // @route   PUT /api/users/resetpassword/:resettoken
 // @access  Public
 const resetPassword = asyncHandler(async (req, res) => {
+
+
+  console.log(req.params.password);
   const resetPasswordToken = crypto
     .createHash('sha256')
-    .update(req.params.resettoken)
+    .update(req.params.resetToken)
     .digest('hex');
 
   const user = await User.findOne({
@@ -196,6 +199,7 @@ const resetPassword = asyncHandler(async (req, res) => {
     resetPasswordExpire: { $gt: Date.now() },
   });
 
+  console.log(user);
   if (!user) {
     res.status(400);
     throw new Error('Invalid token');
