@@ -6,6 +6,7 @@ import nodemailer from "nodemailer";
 import crypto from "crypto";
 import { json } from "express";
 import emailTemplate from "../assets/email.js";
+import { error } from "console";
 
 // @desc    Auth user & get token
 // @route   POST /api/users/login
@@ -141,7 +142,9 @@ const forgotPassword = asyncHandler(async (req, res) => {
   //console.log(user);
 
   if (!user) {
-    res.status(404);
+    res.status(404).json({
+      error:"No user find"
+    });
     throw new Error("User not found");
   }
 
