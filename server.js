@@ -1,4 +1,5 @@
 import express from 'express';
+//import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import connectDB from './config/db.js';
@@ -7,6 +8,8 @@ import userRoutes from './routes/userRoutes.js';
 import productRoutes from './routes/productRoutes.js';
 import cartRoutes from './routes/cartRoutes.js';
 import orderRoutes from './routes/orderRoutes.js'
+//import cartRoutes from './routes/productRoutes.js';
+import paymentRoutes  from './routes/paymentRouters.js';
 import cors from 'cors';
 
 dotenv.config();
@@ -41,8 +44,12 @@ app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/order', orderRoutes);
 
+app.use('/api/payments',paymentRoutes);
 app.use(notFound);
 app.use(errorHandler);
+
+//payment
+
 
 export default app;
 
