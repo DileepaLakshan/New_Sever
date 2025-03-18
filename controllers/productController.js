@@ -200,7 +200,65 @@ const addReview = asyncHandler(async (req, res) => {
 
 
 
+// @desc    Delete Product Review
+// @route   DELETE /api/products/:id/reviews
+// @access  Private
+const deleteReview = asyncHandler(async (req, res) => {
+  const { review_id } = req.body;
+
+  const user = await User.findById(req.user._id);
+
+  if (!user) {
+    res.status(401);
+    throw new Error('User not found');
+  }
+
+  // Find the product by ID
+  const product = await Product.findById(req.params.id);
+
+  if (!product) {
+    res.status(404);
+    throw new Error('Product not found');
+  }
+
+  // Find the review index in the product's reviews array
+  const reviewIndex = product.reviews.findIndex(
+    (review) => review._id.toString() === review_id
+  );
+
+  if (reviewIndex !== -1) {
+    const review = product.reviews[reviewIndex];
+
+    // Check if the logged-in user is the one who wrote the review
+    if (review.user.toString() === req.user._id.toString()) {
+      product.reviews.splice(reviewIndex, 1); // Remove the review
+      product.numReviews = product.reviews.length;
+
+      // Recalculate average rating
+      if (product.numReviews > 0) {
+        product.rating =
+          product.reviews.reduce((acc, review) => acc + review.rating, 0) /
+          product.numReviews;
+      } else {
+        product.rating = 0;
+      }
+
+      await product.save();
+
+      res.json({ message: 'Review removed successfully' });
+    } else {
+      res.status(403); // Forbidden
+      throw new Error('You can only delete your own reviews');
+    }
+  } else {
+    res.status(404);
+    throw new Error('Review not found');
+  }
+});
 
 
-export { addProduct, getProductById, getProducts, updateProduct, deleteProduct, getProducts2, addReview };
+
+
+
+export { addProduct, getProductById, getProducts, updateProduct, deleteProduct, getProducts2, addReview, deleteReview };
 
