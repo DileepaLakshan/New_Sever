@@ -257,8 +257,60 @@ const deleteReview = asyncHandler(async (req, res) => {
 });
 
 
+// @desc    Update Product Review
+// @route   PUT /api/products/:id/reviews
+// @access  Private
+const updatedReview = asyncHandler(async (req, res) => {
+  const { review_id, rating, comment } = req.body;
+
+  const user = await User.findById(req.user._id);
+
+  if (!user) {
+    res.status(401);
+    throw new Error('User not found');
+  }
+
+  // Find the product by ID
+  const product = await Product.findById(req.params.id);
+
+  if (!product) {
+    res.status(404);
+    throw new Error('Product not found');
+  }
+
+  // Find the review by ID
+  const review = product.reviews.find(
+    (r) => r._id.toString() === review_id
+  );
+
+  if (!review) {
+    res.status(404);
+    throw new Error('Review not found');
+  }
+
+  // Check if the logged-in user is the one who wrote the review
+  if (review.user.toString() !== req.user._id.toString()) {
+    res.status(403);
+    throw new Error('You can only update your own reviews');
+  }
+
+  // Update the review fields
+  review.rating = rating;
+  review.comment = comment;
+
+  // Recalculate average rating
+  product.rating =
+    product.reviews.reduce((acc, r) => acc + r.rating, 0) /
+    product.reviews.length;
+
+  await product.save();
+
+  res.json({ message: 'Review updated successfully' });
+});
 
 
 
-export { addProduct, getProductById, getProducts, updateProduct, deleteProduct, getProducts2, addReview, deleteReview };
+
+
+export { addProduct, getProductById, getProducts, updateProduct, deleteProduct, getProducts2, addReview, deleteReview, updatedReview };
 
