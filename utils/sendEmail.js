@@ -19,9 +19,9 @@ const sendEmail = async (to, subject, text) => {
       // Email options
       const mailOptions = {
         from: process.env.EMAIL_USER,
-        to,
-        subject,
-        text,
+        to:to,
+        subject: subject,
+        text: text,
       };
       console.log("test32");
       // Send email
