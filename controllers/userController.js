@@ -169,6 +169,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
   // Send email
   try {
     console.log("test26");
+    console.log(user.email);
     await sendEmail(
       user.email,
       "Password Reset Request",
