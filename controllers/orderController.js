@@ -22,6 +22,8 @@ const createOrder = asyncHandler(async (req, res) => {
   });
 
   const createdOrder = await order.save();
+  req.user.cart = [];
+  await req.user.save(); 
   res.status(201).json(createdOrder);
 });
 
