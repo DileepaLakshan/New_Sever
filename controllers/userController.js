@@ -15,7 +15,7 @@ const authUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
   const user = await User.findOne({ email });
-
+  
   if (user && (await user.matchPassword(password))) {
     const token = genrateToken(res, user._id);
 
@@ -27,7 +27,9 @@ const authUser = asyncHandler(async (req, res) => {
       token: token,
     });
   } else {
-    res.status(401);
+    res.status(401).json({
+      error: "Invalid Password"
+    });
     throw new Error("Invalid email or password");
   }
 });
