@@ -8,6 +8,7 @@ import { json } from "express";
 import emailTemplate from "../assets/email.js";
 import { error } from "console";
 
+
 // @desc    Auth user & get token
 // @route   POST /api/users/login
 // @access  Public
@@ -163,9 +164,11 @@ const forgotPassword = asyncHandler(async (req, res) => {
     "host"
   )}/api/users/resetpassword`;
   console.log(resetUrl);
+  console.log("test25");
 
   // Send email
   try {
+    console.log("test26");
     await sendEmail(
       user.email,
       "Password Reset Request",
@@ -173,8 +176,10 @@ const forgotPassword = asyncHandler(async (req, res) => {
       Use this like to reset your password: \n\n${resetUrl}
       `
     );
+    console.log("test27");
     res.status(200).json({ message: "Email sent successfully" });
   } catch (error) {
+    console.log("test28");
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;
     await user.save({ validateBeforeSave: false });
