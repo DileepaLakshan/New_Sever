@@ -15,6 +15,7 @@ const orderSchema = mongoose.Schema(
           ref: 'Product', // References the Product model
         },
         quantity: { type: Number, required: true },
+        name: { type: String, required: true },
       },
     ],
     shippingAddress: {
