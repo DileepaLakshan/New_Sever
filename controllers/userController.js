@@ -16,6 +16,12 @@ const authUser = asyncHandler(async (req, res) => {
 
   const user = await User.findOne({ email });
 
+  if(!user)
+  {
+      res.status(401);
+      throw new Error("Invalid email");
+  }
+
   if (user && (await user.matchPassword(password))) {
     const token = genrateToken(res, user._id);
 
@@ -28,7 +34,7 @@ const authUser = asyncHandler(async (req, res) => {
     });
   } else {
     res.status(401);
-    throw new Error("Invalid email or password");
+    throw new Error("Invalid password");
   }
 });
 
