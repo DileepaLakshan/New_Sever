@@ -54,9 +54,11 @@ const orderSchema = mongoose.Schema(
     deliveredAt: {
       type: Date,
     },
-    deliveryState: {
+    status: {
       type: String,
-      default: "Item Preparing",
+      required: true,
+      default: 'Item Preparing',
+      enum: ['Item Preparing', 'Item Packing', 'Out for Delivery', 'Delivered'],
     },
   },
   {

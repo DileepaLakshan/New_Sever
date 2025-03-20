@@ -70,7 +70,23 @@ const updateOrderToPaid = asyncHandler(async (req, res) => {
 // @access  Private
 const getMyOrders = asyncHandler(async (req, res) => {
   const orders = await Order.find({ user: req.user._id });
-  res.json(orders);
+  const formattedOrders = orders.map(order => ({
+    _id: order._id,
+    userId: order.user,
+    items: order.orderItems.map(item => ({
+      name: item.name,
+      quantity: item.quantity,
+      price: item.price
+    })),
+    amount: order.totalPrice,
+    status: order.status,
+    shippingAddress: order.shippingAddress,
+    paymentMethod: order.paymentMethod,
+    createdAt: order.createdAt
+  }));
+  
+  res.status(200);
+  res.json({ success: true, data: formattedOrders });
 });
 
 // @desc    Get all orders (Admin)
@@ -78,7 +94,54 @@ const getMyOrders = asyncHandler(async (req, res) => {
 // @access  Admin
 const getAllOrders = asyncHandler(async (req, res) => {
   const orders = await Order.find({}).populate('user', 'id name email');
-  res.json(orders);
+  const formattedOrders = orders.map(order => ({
+    _id: order._id,
+    userId: order.user._id,
+    items: order.orderItems.map(item => ({
+      name: item.name,
+      quantity: item.quantity,
+      price: item.price
+    })),
+    amount: order.totalPrice,
+    status: order.status || 'Item Preparing',
+    shippingAddress: order.shippingAddress,
+    paymentMethod: order.paymentMethod,
+    createdAt: order.createdAt
+  }));
+  res.status(200);
+  res.json({ success: true, data: formattedOrders });
+});
+
+
+
+// @desc    Update order status (Admin)
+// @route   PUT /api/admin/order/status/:id
+// @access  Admin
+const updateOrderStatus = asyncHandler(async (req, res) => {
+  const order = await Order.findById(req.params.id);
+
+  if (order) {
+    const { status } = req.body;
+    
+    if (!['Item Preparing', 'Item Packing', 'Out for Delivery', 'Delivered'].includes(status)) {
+      res.status(400);
+      throw new Error('Invalid order status');
+    }
+    
+    order.status = status;
+    
+    // If status is delivered, also update isDelivered and deliveredAt
+    if (status === 'Delivered') {
+      order.isDelivered = true;
+      order.deliveredAt = Date.now();
+    }
+
+    const updatedOrder = await order.save();
+    res.json({ success: true, data: updatedOrder });
+  } else {
+    res.status(404);
+    throw new Error('Order not found');
+  }
 });
 
 // @desc    Update order to delivered (Admin)
@@ -90,6 +153,7 @@ const updateOrderToDelivered = asyncHandler(async (req, res) => {
   if (order) {
     order.isDelivered = true;
     order.deliveredAt = Date.now();
+    order.status = 'Delivered';
 
     const updatedOrder = await order.save();
     res.json(updatedOrder);
@@ -102,6 +166,7 @@ const updateOrderToDelivered = asyncHandler(async (req, res) => {
 export {
   createOrder,
   getOrderById,
+  updateOrderStatus,
   updateOrderToPaid,
   getMyOrders,
   getAllOrders,
