@@ -256,6 +256,31 @@ const deleteReview = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc    Get product review by ID
+// @route   GET /api/products/reviews/:id
+// @access  Public
+const getProductReview = asyncHandler(async (req, res) => {
+  try {
+    // Find the product by ID
+    const product = await Product.findById(req.params.id);
+
+    if (product) {
+      // Construct the review response
+      const review = {
+        reviews: product.reviews,
+        rating: product.rating,
+        numReviews: product.numReviews
+      };
+
+      res.status(200).json(review);
+    } else {
+      res.status(404).json({ message: "Product not found" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
 
 // @desc    Update Product Review
 // @route   PUT /api/products/:id/reviews
@@ -312,5 +337,5 @@ const updatedReview = asyncHandler(async (req, res) => {
 
 
 
-export { addProduct, getProductById, getProducts, updateProduct, deleteProduct, getProducts2, addReview, deleteReview, updatedReview };
+export { addProduct, getProductById, getProducts, updateProduct, deleteProduct, getProducts2, addReview, deleteReview, updatedReview, getProductReview };
 
