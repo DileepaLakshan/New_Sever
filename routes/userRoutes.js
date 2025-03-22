@@ -23,7 +23,7 @@ import { admin, protect, isadmin } from '../middleware/authMiddleware.js';
   router.post('/adminAuth', isadmin,  authUser);
   router.post('/logout', logoutUser);
   router.post('/forgotpassword', forgotPassword);
-  router.post('/verify-password', verifyEmail);
+  router.post('/verify-Email', verifyEmail);
   router.put('/resetpassword', resetPassword);
   router.route('/profile').get(protect, getUserProfile).put(protect, updateUserProfile);
 
