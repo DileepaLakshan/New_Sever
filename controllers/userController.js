@@ -15,7 +15,7 @@ const authUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
   const user = await User.findOne({ email });
-  
+
   if (user && (await user.matchPassword(password))) {
     const token = genrateToken(res, user._id);
 
@@ -55,13 +55,32 @@ const registerUser = asyncHandler(async (req, res) => {
     password,
   });
 
+ 
+
   if (user) {
     genrateToken(res, user._id);
+
+    const token=  user.getResetPasswordToken();
+    console.log(user.email);
+
+    const resetUrl = `${req.protocol}://${req.get(
+      "host"
+    )}/api/users/verifyEmail`;
+    console.log(resetUrl);
+  
+    await sendEmail(
+      user.email,
+      "Verify Email",
+      `Copy this code : ${token}
+      Use this like to verify user email \n\n
+      `
+    );
     res.status(201).json({
       _id: user._id,
       name: user.name,
       email: user.email,
       isAdmin: user.isAdmin,
+      
     });
   } else {
     res.status(400);
@@ -100,6 +119,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
       shippingAddress: user.shippingAddress,
     });
   } else {
+  
     res.status(404);
     throw new Error("User not found");
   }
