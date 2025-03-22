@@ -78,7 +78,7 @@ const registerUser = asyncHandler(async (req, res) => {
       user.email,
       "Verify Email",
       `Copy this code : ${token}
-      Use this like to verify user email \n\n
+      Use this Code to verify user email \n\n
       `
     );
     res.status(201).json({
@@ -103,7 +103,7 @@ const userExist = await User.findOne({ email });
 
 if(!userExist)
 {
-    res.status(400);
+    res.status(404);
     throw new Error("User not found");
 }
 console.log(token);
