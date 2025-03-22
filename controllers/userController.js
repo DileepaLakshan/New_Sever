@@ -146,11 +146,10 @@ const forgotPassword = asyncHandler(async (req, res) => {
   const { email } = req.body;
 
   const user = await User.findOne({ email });
-  //console.log(user);
 
   if (!user) {
     res.status(404).json({
-      error:"No user find"
+      error: "No user found",
     });
     throw new Error("User not found");
   }
@@ -159,10 +158,8 @@ const forgotPassword = asyncHandler(async (req, res) => {
   const resetToken = user.getResetPasswordToken();
   await user.save({ validateBeforeSave: false });
 
-  // Create reset URL
-  const resetUrl = `${req.protocol}://${req.get(
-    "host"
-  )}/api/users/resetpassword`;
+  // Create reset URL with HTTPS
+  const resetUrl = `https://${req.get("host")}/api/users/resetpassword`;
   console.log(resetUrl);
   console.log("test25");
 
@@ -173,9 +170,8 @@ const forgotPassword = asyncHandler(async (req, res) => {
     await sendEmail(
       user.email,
       "Password Reset Request",
-      `Copy this code : ${resetToken}
-      Use this like to reset your password: \n\n${resetUrl}
-      `
+      `Copy this code: ${resetToken}
+      Use this link to reset your password: \n\n${resetUrl}`
     );
     console.log("test27");
     res.status(200).json({ message: "Email sent successfully" });
@@ -185,10 +181,11 @@ const forgotPassword = asyncHandler(async (req, res) => {
     user.resetPasswordExpire = undefined;
     await user.save({ validateBeforeSave: false });
     res.status(500);
-    console.log("Email not send");
+    console.log("Email not sent");
     throw new Error("Email could not be sent");
   }
 });
+
 
 // @desc    Reset password
 // @route   PUT /api/users/resetpassword
