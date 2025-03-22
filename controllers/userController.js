@@ -65,7 +65,8 @@ const registerUser = asyncHandler(async (req, res) => {
   if (user) {
     genrateToken(res, user._id);
 
-    const token=  user.getResetPasswordToken();
+    const token = user.getResetPasswordToken();
+    await user.save({ validateBeforeSave: false });
     console.log(user.email);
 
     const resetUrl = `${req.protocol}://${req.get(
@@ -92,6 +93,51 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new Error("Invalid user data");
   }
 });
+
+
+const verifyEmail = asyncHandler(async (req, res) => {
+
+const {email, token} = req.body;
+
+const userExist = await User.findOne({ email });
+
+if(!userExist)
+{
+    res.status(400);
+    throw new Error("User not found");
+}
+console.log(token);
+if(!token){
+  res.status(400);
+  throw new Error("Token Empty ");
+}
+
+const resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(req.body.token)
+    .digest("hex");
+
+const user = await User.findOne({
+      resetPasswordToken,
+      resetPasswordExpire: { $gt: Date.now() },
+    });
+
+
+if (!user) {
+  res.status(400);
+  throw new Error("Invalid token");
+}
+
+
+res.status(200).json({ message: "Email verified successfully" });
+
+
+
+})
+
+
+
+
 
 // @desc    Logout user / clear cookie
 // @route   POST /api/users/logout
@@ -276,4 +322,5 @@ export {
   updateUserProfile,
   forgotPassword,
   resetPassword,
+  verifyEmail
 };

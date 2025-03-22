@@ -10,7 +10,8 @@ import {
   updateUser,
   updateUserProfile,
   forgotPassword,	
-  resetPassword
+  resetPassword,
+  verifyEmail
 } from '../controllers/userController.js';
 import { admin, protect, isadmin } from '../middleware/authMiddleware.js';
 
@@ -22,6 +23,7 @@ import { admin, protect, isadmin } from '../middleware/authMiddleware.js';
   router.post('/adminAuth', isadmin,  authUser);
   router.post('/logout', logoutUser);
   router.post('/forgotpassword', forgotPassword);
+  router.post('/verify-password', verifyEmail);
   router.put('/resetpassword', resetPassword);
   router.route('/profile').get(protect, getUserProfile).put(protect, updateUserProfile);
 
