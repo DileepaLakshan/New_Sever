@@ -54,7 +54,7 @@ const getCart = asyncHandler(async (req, res) => {
           price: product.price,
           image: product.image,
           quantity: item.quantity, // Assuming you store quantity in the cart
-          countInStock: product.countInStock,
+          countInStock: item.countInStock,
         };
       })
     );
