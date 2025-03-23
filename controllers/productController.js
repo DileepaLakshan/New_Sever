@@ -10,7 +10,7 @@ const addProduct = asyncHandler(async (req, res) => {
   
   console.log(req.body);
 
-    const { name, image, category, description, price, modelImageUrl, imageUrl } = req.body;
+    const { name, image, category, description, price, modelImageUrl, imageUrl,countInStock } = req.body;
   
   
     const user = await User.findById(req.user._id);
@@ -25,6 +25,7 @@ const addProduct = asyncHandler(async (req, res) => {
       price,
       modelImageUrl,
       imageUrl,
+      countInStock,
     });
   
   
@@ -38,6 +39,7 @@ const addProduct = asyncHandler(async (req, res) => {
         category: product.category,
         description: product.description,
         price: product.price,
+        countInStock: product.countInStock,
         success: true, // Include the 'success' field for frontend validation
         message: "Product added successfully",
       });
