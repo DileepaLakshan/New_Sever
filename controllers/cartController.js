@@ -37,6 +37,11 @@ const addItemToCart = asyncHandler(async (req, res) => {
 // @route   GET /api/cart
 // @access  Private
 const getCart = asyncHandler(async (req, res) => {
+
+    if (!req.user) {
+      res.status(401);
+      throw new Error('Unauthorized');
+    }
     const user = await User.findById(req.user._id).populate('cart.productId'); // Populate product details
   
     if (!user) {
