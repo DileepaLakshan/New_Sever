@@ -119,9 +119,36 @@ const getProductById = asyncHandler(async (req, res) => {
 
 
 const updateProduct= asyncHandler(async (req, res) => {
-  const { productId, quantity } = req.body;
+  // const { productId, quantity } = req.body;
+  const { name, image, category, description, price ,countInStock} = req.body;
 
-  const product = await Product.findById(productId);
+  const product = await Product.findById(req.params.id);
+
+    if (product) {
+    // Update the product's fields
+    product.name = name || product.name;
+    product.image = image || product.image;
+    product.category = category || product.category;
+    product.description = description || product.description;
+    product.price = price || product.price;
+    product.countInStock = countInStock || product.countInStock;
+    // Save the updated product
+    const updatedProduct = await product.save();
+
+    // Send the updated product in the response
+    res.status(200).json({
+      _id: updatedProduct._id,
+      name: updatedProduct.name,
+      image: updatedProduct.image,
+      category: updatedProduct.category,
+      description: updatedProduct.description,
+      price: updatedProduct.price,
+    });
+  } else {
+    res.status(404);
+    throw new Error('Product not found');
+  }
+
 
   if (!product) {
       res.status(404);
