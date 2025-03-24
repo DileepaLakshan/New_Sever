@@ -93,7 +93,6 @@ const updateProduct = asyncHandler(async (req, res) => {
 
   if (product) {
 
-
     // If a quantity is provided, update the stock
     if (quantity !== undefined) {
       if (product.countInStock < quantity) {
