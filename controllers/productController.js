@@ -85,37 +85,7 @@ const getProductById = asyncHandler(async (req, res) => {
 // @desc    Update a product
 // @route   PUT /api/products/:id
 // @access  Public
-// const updateProduct = asyncHandler(async (req, res) => {
-//   const { name, image, category, description, price ,countInStock} = req.body;
 
-//   // Find the product by ID
-//   const product = await Product.findById(req.params.id);
-
-//   if (product) {
-//     // Update the product's fields
-//     product.name = name || product.name;
-//     product.image = image || product.image;
-//     product.category = category || product.category;
-//     product.description = description || product.description;
-//     product.price = price || product.price;
-//     product.countInStock = countInStock || product.countInStock;
-//     // Save the updated product
-//     const updatedProduct = await product.save();
-
-//     // Send the updated product in the response
-//     res.status(200).json({
-//       _id: updatedProduct._id,
-//       name: updatedProduct.name,
-//       image: updatedProduct.image,
-//       category: updatedProduct.category,
-//       description: updatedProduct.description,
-//       price: updatedProduct.price,
-//     });
-//   } else {
-//     res.status(404);
-//     throw new Error('Product not found');
-//   }
-// });
 
 
 const updateProduct= asyncHandler(async (req, res) => {
@@ -131,7 +101,9 @@ const updateProduct= asyncHandler(async (req, res) => {
     product.category = category || product.category;
     product.description = description || product.description;
     product.price = price || product.price;
-    product.countInStock = countInStock || product.countInStock;
+    //product.countInStock = countInStock || product.countInStock;
+    product.countInStock = countInStock !== undefined ? countInStock : product.countInStock;  // Ensure that countInStock is updated correctly
+
     // Save the updated product
     const updatedProduct = await product.save();
 
@@ -143,6 +115,7 @@ const updateProduct= asyncHandler(async (req, res) => {
       category: updatedProduct.category,
       description: updatedProduct.description,
       price: updatedProduct.price,
+      countInStock: updatedProduct.countInStock, // Include the updated countInStock in the response
     });
   } else {
     res.status(404);
