@@ -138,19 +138,6 @@ res.status(200).json({ message: "Email verified successfully" });
 
 
 
-
-// @desc    Logout user / clear cookie
-// @route   POST /api/users/logout
-// @access  Private
-const logoutUser = asyncHandler(async (req, res) => {
-  res.cookie("jwt", "", {
-    httpOnly: true,
-    expires: new Date(0),
-  });
-
-  res.status(200).json({ message: "Logged out successfully" });
-});
-
 // @desc    Get user profile
 // @route   GET /api/users/profile
 // @access  Private
@@ -316,7 +303,6 @@ export {
   getUserById,
   getUserProfile,
   getUsers,
-  logoutUser,
   registerUser,
   updateUser,
   updateUserProfile,
