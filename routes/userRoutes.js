@@ -10,7 +10,8 @@ import {
   updateUserProfile,
   forgotPassword,	
   resetPassword,
-  verifyEmail
+  verifyEmail,
+  googleLogin,
 } from '../controllers/userController.js';
 import { admin, protect, isadmin } from '../middleware/authMiddleware.js';
 
@@ -19,6 +20,7 @@ import { admin, protect, isadmin } from '../middleware/authMiddleware.js';
  
   router.route('/').post(registerUser).get(protect, admin, getUsers);
   router.post('/auth',  authUser);
+  router.post('/google-login',  googleLogin);
   router.post('/adminAuth', isadmin,  authUser);
   router.post('/forgotpassword', forgotPassword);
   router.post('/verify-Email', verifyEmail);
