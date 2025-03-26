@@ -9,7 +9,7 @@ router.route('/:id').get(getProductById);
 router.route('/reviews/:id').post(protect, addReview).delete(protect, deleteReview).put(protect, updatedReview).get(getProductReview);
 router.route('/addProduct').post(protect, admin, addProduct);
 router.route('/:id').delete(protect, admin,deleteProduct);
-router.route('/:id').put(protect,updateProduct);
+router.route('/:id').put(protect,admin,updateProduct);
 
 export default router;
 
