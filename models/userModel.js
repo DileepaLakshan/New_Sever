@@ -4,9 +4,10 @@ import crypto from 'crypto';
 
 const userSchema = mongoose.Schema(
   {
+    uid: { type: String, unique: true },
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
+    password: { type: String,},
     isAdmin: { type: Boolean, required: true, default: false },
     firstName: { type: String },
     lastName: { type: String },

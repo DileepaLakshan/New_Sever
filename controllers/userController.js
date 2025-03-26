@@ -297,6 +297,42 @@ const updateUser = asyncHandler(async (req, res) => {
   res.send("update user");
 });
 
+
+// @desc    google login
+// @route   POST /api/users/google-login
+// @access  Public
+const googleLogin = asyncHandler(async (req, res) => {
+  const { uid, name, email } = req.body;
+
+  try{
+    const user = await User.findOne({ email });
+
+    if(!user)
+    {
+      user = await User.create({
+        uid,
+        name,
+        email,
+      });
+    }
+  
+    res.status(200).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      isAdmin: user.isAdmin,
+      token: token,
+    });
+  }
+  catch{
+    res.status(500);
+    throw new Error("server error");
+  }
+});
+
+  
+
+
 export {
   authUser,
   deleteUser,
@@ -308,5 +344,6 @@ export {
   updateUserProfile,
   forgotPassword,
   resetPassword,
-  verifyEmail
+  verifyEmail,
+  googleLogin,
 };
