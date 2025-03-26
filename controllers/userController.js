@@ -315,6 +315,7 @@ const googleLogin = asyncHandler(async (req, res) => {
         email,
       });
     }
+    const token = genrateToken(res, user._id);
   
     res.status(200).json({
       _id: user._id,
