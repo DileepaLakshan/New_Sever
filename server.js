@@ -19,7 +19,7 @@ connectDB(); // Connecct to MongoDB
 const app = express();
 
 app.use(cors({
-  origin: ['https://funiture-site-1-git-main-neshadis-projects.vercel.app', 'http://localhost:5173', 'https://www.decorit.store/'],// Allow specific origin
+  origin: ['https://funiture-site-1-git-main-neshadis-projects.vercel.app', 'http://localhost:5173'],// Allow specific origin
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed methods
   credentials: true, // Allow cookies if needed
 }))
