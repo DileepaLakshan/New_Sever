@@ -74,20 +74,20 @@ const registerUser = asyncHandler(async (req, res) => {
     )}/api/users/verifyEmail`;
     console.log(resetUrl);
   
-    await sendEmail(
-      user.email,
-      "Verify Email",
-      `Copy this code : ${token}
-      Use this Code to verify user email \n\n
-      `
-    );
-    res.status(201).json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      isAdmin: user.isAdmin,
+    // await sendEmail(
+    //   user.email,
+    //   "Verify Email",
+    //   `Copy this code : ${token}
+    //   Use this Code to verify user email \n\n
+    //   `
+    // );
+    // res.status(201).json({
+    //   _id: user._id,
+    //   name: user.name,
+    //   email: user.email,
+    //   isAdmin: user.isAdmin,
       
-    });
+    // });
   } else {
     res.status(400);
     throw new Error("Invalid user data");
