@@ -163,6 +163,21 @@ const getUserProfile = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc    logOut user
+// @route   POST /api/users/logout
+// @access  Private
+const logOutUser = asyncHandler(async (req, res) => {
+  res.clearCookie('jwt', {
+        httpOnly: true,
+        path: '/', 
+        secure: true, // matches the 'Secure' checkmark in your image
+        sameSite: 'strict' // or 'lax', match your original setting
+    });
+    
+  res.status(200).json({ message: 'Logged out successfully' });
+});
+
+
 // @desc    Update user profile
 // @route   PUT /api/users/profile
 // @access  Private
@@ -347,4 +362,5 @@ export {
   resetPassword,
   verifyEmail,
   googleLogin,
+  logOutUser,
 };

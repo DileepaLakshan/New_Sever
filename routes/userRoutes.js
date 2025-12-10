@@ -12,6 +12,7 @@ import {
   resetPassword,
   verifyEmail,
   googleLogin,
+  logOutUser,
 } from '../controllers/userController.js';
 import { admin, protect, isadmin } from '../middleware/authMiddleware.js';
 
@@ -19,6 +20,7 @@ import { admin, protect, isadmin } from '../middleware/authMiddleware.js';
   const router = express.Router();
  
   router.route('/').post(registerUser).get(protect, admin, getUsers);
+  router.route('/logout').post(logOutUser);
   router.post('/auth',  authUser);
   router.post('/google-login',  googleLogin);
   router.post('/adminAuth', isadmin,  authUser);
