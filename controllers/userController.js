@@ -81,13 +81,13 @@ const registerUser = asyncHandler(async (req, res) => {
     //   Use this Code to verify user email \n\n
     //   `
     // );
-    // res.status(201).json({
-    //   _id: user._id,
-    //   name: user.name,
-    //   email: user.email,
-    //   isAdmin: user.isAdmin,
+    res.status(201).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      isAdmin: user.isAdmin,
       
-    // });
+    });
   } else {
     res.status(400);
     throw new Error("Invalid user data");
