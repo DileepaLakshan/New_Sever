@@ -167,14 +167,14 @@ const getUserProfile = asyncHandler(async (req, res) => {
 // @route   POST /api/users/logout
 // @access  Private
 const logOutUser = asyncHandler(async (req, res) => {
-  res.clearCookie('jwt', {
-        httpOnly: true,
-        path: '/', 
-        secure: true, // matches the 'Secure' checkmark in your image
-        sameSite: 'strict' // or 'lax', match your original setting
-    });
-    
-  res.status(200).json({ message: 'Logged out successfully' });
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: true,        // true if HTTPS (Vercel/Render/Production)
+    sameSite: "none",    // must match when cookie was created
+    path: "/",           // must match the original cookie path
+  });
+
+  return res.status(200).json({ message: "Logged out successfully" });
 });
 
 
